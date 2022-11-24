@@ -1013,10 +1013,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f4029613143cf24da5ac8a5f7398aa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_JumpSpeed: 4
   m_Camera: {fileID: 963194227}
   m_LerpRotation: 0.3
   m_WalkSpeed: 2.5
   m_RunSpeed: 6.5
+  m_ComboPunchTime: 2.5
   m_LeftHandCollider: {fileID: 963193856}
   m_RightHandCollider: {fileID: 913710042}
   m_RightKickCollider: {fileID: 1252952951}

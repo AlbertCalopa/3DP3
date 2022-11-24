@@ -14,6 +14,7 @@ public class MarioPlayerController : MonoBehaviour
     Animator m_Animator;
     CharacterController m_CharacterController;
     float m_VerticalSpeed = 0.0f;
+    public float m_JumpSpeed;
 
     public Camera m_Camera;
     public float m_LerpRotation = 0.85f;
@@ -114,6 +115,11 @@ public class MarioPlayerController : MonoBehaviour
 
         m_VerticalSpeed += Physics.gravity.y * Time.deltaTime;
         l_Movement.y = m_VerticalSpeed * Time.deltaTime;
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            m_VerticalSpeed = m_JumpSpeed;
+        }
         if (Input.GetMouseButtonDown(0) && CanPunch())
         {
             if (MustRestartComboPunch())
