@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Animations;
 using UnityEngine;
-
-public class MarioPlayerController : MonoBehaviour
+public class MarioPlayerController : MonoBehaviour, IRestartGameElement
 {
     public enum TPunchType
     {
@@ -30,6 +29,16 @@ public class MarioPlayerController : MonoBehaviour
     public Collider m_RightKickCollider;
     bool m_IsPunchEnabled = false;
 
+    Vector3 m_StartPosition;
+    Quaternion m_StartRotation;
+
+    [Header("Elevator")]
+    public float m_ElevatorDotAngle = 0.95f;
+    Collider m_CurrentElevatorCollider = null;
+
+    [Header("Bridge")]
+    public float m_BridgeForce = 5.0f;
+
     private void Awake()
     {
         m_Animator = GetComponent<Animator>();
@@ -41,6 +50,11 @@ public class MarioPlayerController : MonoBehaviour
         m_LeftHandCollider.gameObject.SetActive(false);
         m_RightHandCollider.gameObject.SetActive(false);
         m_RightKickCollider.gameObject.SetActive(false);
+
+        m_StartPosition = transform.position;
+        m_StartRotation = transform.rotation;
+        GameController.GetGameController().AddRestartGameElement(this);
+        GameController.GetGameController().SetPlayer(this);
     }
 
 
@@ -139,6 +153,15 @@ public class MarioPlayerController : MonoBehaviour
         }
     }
 
+    void LateUpdate()
+    {
+        if(m_CurrentElevatorCollider != null)
+        {
+            Vector3 l_EulerRotation = transform.rotation.eulerAngles;
+            transform.rotation = Quaternion.Euler(0.0f, l_EulerRotation.y, 0.0f);
+        }
+    }
+
     bool CanPunch()
     {
         return !m_IsPunchEnabled;
@@ -185,6 +208,65 @@ public class MarioPlayerController : MonoBehaviour
         else if (m_CurrentComboPunch == TPunchType.KICK)
         {
             m_Animator.SetTrigger("PunchKick");
+        }
+    }
+
+    public void RestartGame()
+    {
+        m_CharacterController.enabled = false;
+        transform.position = m_StartPosition;
+        transform.rotation = m_StartRotation;
+        m_CharacterController.enabled = true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Elevator" && CanAttachToElevator(other))
+        {
+            AttachToElevator(other);
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.tag == "Elevator" && other==m_CurrentElevatorCollider)
+        {
+            DetachElevator();
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if(other.tag == "Elevator")
+        {
+            if(m_CurrentElevatorCollider == other && Vector3.Dot(other.transform.up, Vector3.up) < m_ElevatorDotAngle)
+            {
+                DetachElevator();
+            }
+            if (CanAttachToElevator(other))
+            {
+                AttachToElevator(other);
+            }
+        }
+    }
+
+    bool CanAttachToElevator(Collider other)
+    {
+        return m_CurrentElevatorCollider == null && Vector3.Dot(other.transform.up, Vector3.up) >= m_ElevatorDotAngle;
+    }
+    void AttachToElevator(Collider other)
+    {
+        transform.SetParent(other.transform);
+        m_CurrentElevatorCollider = other;
+    }
+    void DetachElevator()
+    {
+        transform.SetParent(null);
+        m_CurrentElevatorCollider = null;
+    }
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if(hit.gameObject.tag == "Bridge")
+        {
+            hit.gameObject.GetComponent<Rigidbody>().AddForceAtPosition(-hit.normal * m_BridgeForce, hit.point);
         }
     }
 }
