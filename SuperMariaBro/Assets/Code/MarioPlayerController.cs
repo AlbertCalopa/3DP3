@@ -21,9 +21,13 @@ public class MarioPlayerController : MonoBehaviour
     public float m_RunSpeed = 6.5f;
 
     [Header("Punch")]
+    public float m_ComboPunchTime = 2.5f;
+    float m_ComboPunchCurrentTime;
+    TPunchType m_CurrentComboPunch;
     public Collider m_LeftHandCollider;
     public Collider m_RightHandCollider;
     public Collider m_RightKickCollider;
+    bool m_IsPunchEnabled = false;
 
     private void Awake()
     {
@@ -32,6 +36,7 @@ public class MarioPlayerController : MonoBehaviour
     }
     void Start()
     {
+        m_ComboPunchCurrentTime = -m_ComboPunchTime;
         m_LeftHandCollider.gameObject.SetActive(false);
         m_RightHandCollider.gameObject.SetActive(false);
         m_RightKickCollider.gameObject.SetActive(false);
@@ -106,11 +111,74 @@ public class MarioPlayerController : MonoBehaviour
         }
         m_Animator.SetFloat("Speed", l_Speed);        
         l_Movement = l_Movement * l_MovementSpeed * Time.deltaTime;
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            m_Animator.SetTrigger("Punch");            
-        }
-        m_CharacterController.Move(l_Movement);
 
+        m_VerticalSpeed += Physics.gravity.y * Time.deltaTime;
+        l_Movement.y = m_VerticalSpeed * Time.deltaTime;
+        if (Input.GetMouseButtonDown(0) && CanPunch())
+        {
+            if (MustRestartComboPunch())
+            {
+                SetComboPunch(TPunchType.RIGHT_HAND);
+            }
+            else
+            {
+                NextComboPunch();
+            }
+        }
+        //m_CharacterController.Move(l_Movement);
+        CollisionFlags l_CollisionFlags = m_CharacterController.Move(l_Movement);
+        if((l_CollisionFlags & CollisionFlags.Below)!=0 && m_VerticalSpeed < 0.0f)
+        {
+            m_VerticalSpeed = 0.0f;
+        }
+    }
+
+    bool CanPunch()
+    {
+        return !m_IsPunchEnabled;
+    }
+
+    public void SetIsPunchEnabled(bool IsPunchEnabled)
+    {
+        m_IsPunchEnabled = IsPunchEnabled;
+    }
+
+    bool MustRestartComboPunch()
+    {
+        return (Time.time - m_ComboPunchCurrentTime) > m_ComboPunchTime;
+    }
+
+    void NextComboPunch()
+    {
+        if(m_CurrentComboPunch == TPunchType.RIGHT_HAND)
+        {
+            SetComboPunch(TPunchType.LEFT_HAND);
+        }
+        else if (m_CurrentComboPunch == TPunchType.LEFT_HAND)
+        {
+            SetComboPunch(TPunchType.KICK);
+        }
+        else if (m_CurrentComboPunch == TPunchType.KICK)
+        {
+            SetComboPunch(TPunchType.RIGHT_HAND);
+        }
+    }
+    void SetComboPunch(TPunchType PunchType)
+    {
+        m_CurrentComboPunch = PunchType;
+        m_ComboPunchCurrentTime = Time.time;
+        m_IsPunchEnabled = true;
+        if(m_CurrentComboPunch == TPunchType.RIGHT_HAND)
+        {
+            m_Animator.SetTrigger("PunchRightHand");
+        }
+        else if (m_CurrentComboPunch == TPunchType.LEFT_HAND)
+        {
+            m_Animator.SetTrigger("PunchLeftHand");
+        }
+        else if (m_CurrentComboPunch == TPunchType.KICK)
+        {
+            m_Animator.SetTrigger("PunchKick");
+        }
     }
 }

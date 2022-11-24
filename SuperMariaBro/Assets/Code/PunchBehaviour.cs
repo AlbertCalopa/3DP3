@@ -37,6 +37,7 @@ public class PunchBehaviour : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         m_MarioPlayerController.SetPunchActive(m_PunchType, false);
+        m_MarioPlayerController.SetIsPunchEnabled(false);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
