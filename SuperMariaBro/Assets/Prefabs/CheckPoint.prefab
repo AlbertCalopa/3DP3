@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8780092178357689847}
   - component: {fileID: 208319169345911684}
   - component: {fileID: 8689482598052813090}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: CheckPoint
   m_TagString: CheckPoint
   m_Icon: {fileID: 0}
@@ -119,7 +119,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6537278066819889400}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}

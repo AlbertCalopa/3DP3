@@ -20,10 +20,10 @@ public class GameController : MonoBehaviour
         {
             m_GameController = new GameObject("GameController").AddComponent<GameController>();
             GameControllerData l_GameControllerData = Resources.Load<GameControllerData>("Data");
-            m_GameController.m_PlayerHealth = l_GameControllerData.m_Lifes;
-            m_GameController.m_PlayerShield = l_GameControllerData.m_Shield;
-            m_GameController.maxBullets = l_GameControllerData.m_MaxBullets;
-            Debug.Log("Data loaded with file" + m_GameController.m_PlayerHealth);
+            //m_GameController.m_PlayerHealth = l_GameControllerData.m_Lifes;
+            //m_GameController.m_PlayerShield = l_GameControllerData.m_Shield;
+            //m_GameController.maxBullets = l_GameControllerData.m_MaxBullets;
+            //Debug.Log("Data loaded with file" + m_GameController.m_PlayerHealth);
         }
         return m_GameController;
     }
