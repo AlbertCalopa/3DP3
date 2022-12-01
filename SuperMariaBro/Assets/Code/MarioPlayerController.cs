@@ -20,6 +20,8 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public float m_WalkSpeed = 2.5f;
     public float m_RunSpeed = 6.5f;
 
+    public Checkpoint m_CurrentCheckpoint = null;
+
     [Header("Punch")]
     public float m_ComboPunchTime = 2.5f;
     float m_ComboPunchCurrentTime;
@@ -38,6 +40,10 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
 
     [Header("Bridge")]
     public float m_BridgeForce = 5.0f;
+
+    [Header("JumpKill")]
+    public float m_KillerJumpSpeed = 5.0f;
+    public float m_MaxAngleAllowedToKillGoomba = 45.0f;
 
     private void Awake()
     {
@@ -214,9 +220,18 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public void RestartGame()
     {
         m_CharacterController.enabled = false;
-        transform.position = m_StartPosition;
-        transform.rotation = m_StartRotation;
+        if (m_CurrentCheckpoint == null)
+        {
+            transform.position = m_StartPosition;
+            transform.rotation = m_StartRotation;
+        }
+        else
+        {
+            transform.position = m_CurrentCheckpoint.m_SpawnPosition.position;
+            transform.rotation = m_CurrentCheckpoint.m_SpawnPosition.rotation;
+        }
         m_CharacterController.enabled = true;
+        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -225,6 +240,15 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         {
             AttachToElevator(other);
         }
+        else if(other.tag == "CheckPoint")
+        {
+            m_CurrentCheckpoint = other.GetComponent<Checkpoint>();
+        }
+        else if(other.tag == "Coin")
+        {
+            other.GetComponent<Coin>().Pick();
+        }
+
     }
     private void OnTriggerExit(Collider other)
     {
@@ -262,11 +286,34 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         transform.SetParent(null);
         m_CurrentElevatorCollider = null;
     }
+    void JumpOverEnemy()
+    {
+        m_VerticalSpeed = m_KillerJumpSpeed;
+    }
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         if(hit.gameObject.tag == "Bridge")
         {
             hit.gameObject.GetComponent<Rigidbody>().AddForceAtPosition(-hit.normal * m_BridgeForce, hit.point);
         }
+        else if(hit.gameObject.tag == "Goomba")
+        {
+            if (CanKillGoomba(hit.normal))
+            {
+                hit.gameObject.GetComponent<Goomba>().Kill();
+                JumpOverEnemy();
+            }
+            else
+            {
+                Debug.DrawRay(hit.point, hit.normal * 3.0f, Color.blue, 5.0f);
+                //Debug.Break();
+
+            }
+        }
+    }
+
+    bool CanKillGoomba(Vector3 Normal)
+    {
+        return Vector3.Dot(Normal, Vector3.up) >= Mathf.Cos(m_MaxAngleAllowedToKillGoomba * Mathf.Deg2Rad);
     }
 }

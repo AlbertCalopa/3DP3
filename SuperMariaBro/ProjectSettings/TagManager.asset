@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Elevator
   - Bridge
+  - CheckPoint
+  - Goomba
+  - Coin
   layers:
   - Default
   - TransparentFX
