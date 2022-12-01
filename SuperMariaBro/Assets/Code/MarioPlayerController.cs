@@ -10,6 +10,12 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         LEFT_HAND,
         KICK
     }
+    public enum TJumpType 
+    {
+        JUMP_1 = 0, 
+        JUMP_2, 
+        JUMP_3
+    }
     Animator m_Animator;
     CharacterController m_CharacterController;
     float m_VerticalSpeed = 0.0f;
@@ -30,6 +36,12 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public Collider m_RightHandCollider;
     public Collider m_RightKickCollider;
     bool m_IsPunchEnabled = false;
+
+    [Header("Jump")]
+    public float m_ComboJumpTime = 2.5f; 
+    float m_ComboJumpCurrentTime; 
+    TJumpType m_CurrentComboJump;  
+    bool m_IsJumpEnabled = false;
 
     Vector3 m_StartPosition;
     Quaternion m_StartRotation;
@@ -64,7 +76,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     }
 
 
-    public void SetPunchActive(TPunchType PunchType, bool Active)
+    public void SetPunchActive(TPunchType PunchType, bool Active) 
     {
         if(PunchType == TPunchType.RIGHT_HAND)
         {
@@ -75,6 +87,22 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
             m_LeftHandCollider.gameObject.SetActive(Active);
         }
         else if(PunchType == TPunchType.KICK)
+        {
+            m_RightKickCollider.gameObject.SetActive(Active);
+        }
+    }
+
+    public void SetJumpActive(TJumpType JumpType, bool Active) 
+    {
+        if (JumpType == TJumpType.JUMP_1)
+        {
+            m_RightHandCollider.gameObject.SetActive(Active);
+        }
+        else if (JumpType == TJumpType.JUMP_2)
+        {
+            m_LeftHandCollider.gameObject.SetActive(Active);
+        }
+        else if (JumpType == TJumpType.JUMP_3)
         {
             m_RightKickCollider.gameObject.SetActive(Active);
         }
@@ -139,6 +167,15 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         if (Input.GetKey(KeyCode.Space))
         {
             m_VerticalSpeed = m_JumpSpeed;
+
+            if (MustRestartComboJump()) 
+            {
+                SetComboJump(TJumpType.JUMP_1);
+            }
+            else
+            {
+                NextComboJump();
+            }
         }
         if (Input.GetMouseButtonDown(0) && CanPunch())
         {
@@ -178,9 +215,18 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         m_IsPunchEnabled = IsPunchEnabled;
     }
 
+    public void SetIsJumpEnabled(bool IsJumpEnabled) 
+    {
+        m_IsJumpEnabled = IsJumpEnabled; 
+    }
+
     bool MustRestartComboPunch()
     {
         return (Time.time - m_ComboPunchCurrentTime) > m_ComboPunchTime;
+    }
+    bool MustRestartComboJump() 
+    {
+        return (Time.time - m_ComboJumpCurrentTime) > m_ComboJumpTime; 
     }
 
     void NextComboPunch()
@@ -196,6 +242,21 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         else if (m_CurrentComboPunch == TPunchType.KICK)
         {
             SetComboPunch(TPunchType.RIGHT_HAND);
+        }
+    }
+    void NextComboJump() 
+    {
+        if (m_CurrentComboJump == TJumpType.JUMP_1)
+        {
+            SetComboJump(TJumpType.JUMP_2);
+        }
+        else if (m_CurrentComboJump == TJumpType.JUMP_2)
+        {
+            SetComboJump(TJumpType.JUMP_3);
+        }
+        else if (m_CurrentComboJump == TJumpType.JUMP_3)
+        {
+            SetComboJump(TJumpType.JUMP_1);
         }
     }
     void SetComboPunch(TPunchType PunchType)
@@ -214,6 +275,24 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         else if (m_CurrentComboPunch == TPunchType.KICK)
         {
             m_Animator.SetTrigger("PunchKick");
+        }
+    } 
+    void SetComboJump(TJumpType JumpType)
+    {
+        m_CurrentComboJump = JumpType;
+        m_ComboPunchCurrentTime = Time.time; 
+        m_IsPunchEnabled = true;
+        if (m_CurrentComboJump == TJumpType.JUMP_1)
+        {
+            m_Animator.SetTrigger("Jump1");
+        }
+        else if (m_CurrentComboJump == TJumpType.JUMP_2)
+        {
+            m_Animator.SetTrigger("Jump2");
+        }
+        else if (m_CurrentComboJump == TJumpType.JUMP_3)
+        {
+            m_Animator.SetTrigger("Jump3");
         }
     }
 

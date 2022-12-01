@@ -2,42 +2,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PunchBehaviour : StateMachineBehaviour
+public class JumpBehaviour : StateMachineBehaviour 
 {
     MarioPlayerController m_MarioPlayerController;
-    public float m_StartPctTime = 0.3f;
-    public float m_EndPctTime = 0.3f;
-    public MarioPlayerController.TPunchType m_PunchType;
-    bool m_PunchActive = false;
+    public float m_StartJctTime = 0.3f;
+    public float m_EndJctTime = 0.3f;
+    public MarioPlayerController.TJumpType m_JumpType;
+    bool m_JumpActive = false;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         m_MarioPlayerController = animator.GetComponent<MarioPlayerController>();
-        m_MarioPlayerController.SetPunchActive(m_PunchType, false); 
-        m_PunchActive = false;
+        m_MarioPlayerController.SetJumpActive(m_JumpType, false);
+        m_JumpActive = false;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if(!m_PunchActive && stateInfo.normalizedTime >= m_StartPctTime && stateInfo.normalizedTime <= m_EndPctTime)
+        if (!m_JumpActive && stateInfo.normalizedTime >= m_StartJctTime && stateInfo.normalizedTime <= m_EndJctTime)
         {
-            m_MarioPlayerController.SetPunchActive(m_PunchType, true);
-            m_PunchActive = true;
+            m_MarioPlayerController.SetJumpActive(m_JumpType, true);
+            m_JumpActive = true;
         }
-        else if(m_PunchActive && stateInfo.normalizedTime > m_EndPctTime)
+        else if (m_JumpActive && stateInfo.normalizedTime > m_EndJctTime)
         {
-            m_MarioPlayerController.SetPunchActive(m_PunchType, false);
-            m_PunchActive = false;
+            m_MarioPlayerController.SetJumpActive(m_JumpType, false);
+            m_JumpActive = false;
         }
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        m_MarioPlayerController.SetPunchActive(m_PunchType, false);
-        m_MarioPlayerController.SetIsPunchEnabled(false);
+        m_MarioPlayerController.SetJumpActive(m_JumpType, false);
+        m_MarioPlayerController.SetIsJumpEnabled(false); 
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
