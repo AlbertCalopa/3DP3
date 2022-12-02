@@ -22,8 +22,16 @@ public class Goomba : MonoBehaviour, IRestartGameElement
     Vector3 m_StartPosition;
     Quaternion m_StartRotation;
 
+    Vector3 l_PlayerPosition;
+    Vector3 l_DirectionToPlayerXZ = Vector3.zero;
+
     public float m_KillTime = 0.5f;
     public float m_KillScale = 0.2f;
+
+    float m_StartSpeed = 3.0f;
+    public float m_GoombaSpeed = 2.0f;
+
+    bool SetDestination = false;
 
     NavMeshAgent NavMeshAgent;
     public List<Transform> PatrolList;
@@ -46,6 +54,7 @@ public class Goomba : MonoBehaviour, IRestartGameElement
 
     void SetterState(TState state)
     {
+        NavMeshAgent.speed = m_StartSpeed;
         switch (state)
         {
             case TState.IDLE:
@@ -54,6 +63,7 @@ public class Goomba : MonoBehaviour, IRestartGameElement
                 NavMeshAgent.SetDestination(PatrolQueue.Peek().position);
                 break;
            case TState.ATTACK:
+                NavMeshAgent.speed = m_GoombaSpeed;
                 break;           
         }
     }
@@ -72,6 +82,8 @@ public class Goomba : MonoBehaviour, IRestartGameElement
         }
         SetIdleState();
         this.NavMeshAgent.isStopped = false;
+
+        SetDestination = false;
 
         m_StartPosition = transform.position;
         m_StartRotation = transform.rotation;
@@ -111,9 +123,24 @@ public class Goomba : MonoBehaviour, IRestartGameElement
         }
     }
 
+    IEnumerator WaitForReset()
+    {
+        yield return new WaitForSeconds(5);
+        SetDestination = false;
+
+    }
+
     void UpdateAttackState()
     {
-        NavMeshAgent.SetDestination(MarioPlayer.transform.position);
+        if (SetDestination == false)
+        {
+            StartCoroutine(WaitForReset());
+            l_PlayerPosition = MarioPlayer.transform.position;
+            l_DirectionToPlayerXZ = (l_PlayerPosition - transform.position);            
+            l_DirectionToPlayerXZ.Normalize();
+            SetDestination = true;            
+        }
+        NavMeshAgent.SetDestination(this.transform.position + l_DirectionToPlayerXZ);
 
         if (Vector3.Distance(MarioPlayer.transform.position, this.transform.position) < 3.0f)
         {
@@ -141,7 +168,7 @@ public class Goomba : MonoBehaviour, IRestartGameElement
     bool SeesPlayer()
     {
         Vector3 l_PlayerPosition = MarioPlayer.transform.position;
-        Vector3 l_DirectionToPlayerXZ = l_PlayerPosition - transform.position;
+        Vector3 l_DirectionToPlayerXZ = (l_PlayerPosition - transform.position);
         l_DirectionToPlayerXZ.y = 0.0f;
         l_DirectionToPlayerXZ.Normalize();
         Vector3 l_ForwardXZ = transform.forward;
@@ -156,7 +183,7 @@ public class Goomba : MonoBehaviour, IRestartGameElement
 
         Ray l_Ray = new Ray(l_EyesPosition, l_Direction);
 
-        return Vector3.Distance(l_PlayerPosition, transform.position) < SightDistance && Vector3.Dot(l_ForwardXZ, l_DirectionToPlayerXZ) > Mathf.Cos(VisualConeAngle * Mathf.Deg2Rad / 2.0f) &&
+        return (Vector3.Distance(l_PlayerPosition, transform.position)) < SightDistance && Vector3.Dot(l_ForwardXZ, l_DirectionToPlayerXZ) > Mathf.Cos(VisualConeAngle * Mathf.Deg2Rad / 2.0f) &&
             !Physics.Raycast(l_Ray, l_Lenght, SightLayerMask.value);
     }
     public void Kill()
@@ -177,7 +204,7 @@ public class Goomba : MonoBehaviour, IRestartGameElement
         transform.position = m_StartPosition;
         transform.rotation = m_StartRotation;
         gameObject.SetActive(true);
-        this.NavMeshAgent.isStopped=true;
+        //this.NavMeshAgent.isStopped=true;
         SetIdleState();
     }
     
