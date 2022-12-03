@@ -62,7 +62,11 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public float m_MarioVidaQuitada = 0.125f;
     public Image m_MarioVida;
     public float m_CurrentMarioVida;
-    bool m_Hit = false;    
+    bool m_Hit = false;
+
+    Vector3 l_Movement;
+
+    Vector3 KnockBack;
 
     private void Awake()
     {
@@ -131,7 +135,13 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         l_RightCamera.Normalize();
         bool l_HasMovenent = false;
 
-        Vector3 l_Movement = Vector3.zero;
+        l_Movement = Vector3.zero;
+
+        if (m_Hit)
+        {
+            m_CharacterController.Move(KnockBack);            
+            return;
+        }
 
         if (Input.GetKey(KeyCode.W))
         {
@@ -169,7 +179,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
                 l_MovementSpeed = m_RunSpeed;
             }
         }
-        m_Animator.SetFloat("Speed", l_Speed);        
+        m_Animator.SetFloat("Speed", l_Speed);             
         l_Movement = l_Movement * l_MovementSpeed * Time.deltaTime;
 
         m_VerticalSpeed += Physics.gravity.y * Time.deltaTime;
@@ -340,6 +350,11 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         {
             other.GetComponent<Coin>().Pick();
         }
+        else if (other.tag == "DamagePlayer")
+        {
+            DamagePlayer();
+            KnockBack = ((transform.position  - other.transform.position)+ Vector3.up).normalized * 0.025f;
+        }
 
     }
     private void OnTriggerExit(Collider other)
@@ -394,25 +409,25 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
             {
                 hit.gameObject.GetComponent<Goomba>().Kill();
                 JumpOverEnemy();
-            }
-            else
-            {
-                if(m_Hit == false)
-                Debug.Log("hit");
-                //m_CurrentMarioVida = m_MarioVida.fillAmount - m_MarioVidaQuitada;
-                //m_MarioVida.fillAmount = m_CurrentMarioVida;
-                Debug.DrawRay(hit.point, hit.normal * 3.0f, Color.blue, 5.0f);
-                m_Hit = true;
-                //Debug.Break();
+            }            
 
-            }
+            
         }
+        
     }
 
     public void DamagePlayer()
     {
         m_CurrentMarioVida = m_MarioVida.fillAmount - m_MarioVidaQuitada;
         m_MarioVida.fillAmount = m_CurrentMarioVida;
+        m_Hit = true;
+        StartCoroutine(PlayerHit());
+        
+    }
+    IEnumerator PlayerHit()
+    {
+        yield return new WaitForSeconds(0.2f);
+        m_Hit = false;
     }
 
     bool CanKillGoomba(Vector3 Normal)
