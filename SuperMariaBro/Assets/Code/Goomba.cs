@@ -9,7 +9,8 @@ public class Goomba : MonoBehaviour, IRestartGameElement
     {
         IDLE = 0,
         PATROL,
-        ATTACK
+        ATTACK,
+        HITMARIO
     }
     [SerializeField]
     float SightDistance = 8.0f;
@@ -42,6 +43,8 @@ public class Goomba : MonoBehaviour, IRestartGameElement
 
     public MarioPlayerController MarioPlayer;
 
+    bool canHit = false;
+
     public TState State
     {
         get { return _State; }
@@ -64,7 +67,9 @@ public class Goomba : MonoBehaviour, IRestartGameElement
                 break;
            case TState.ATTACK:
                 NavMeshAgent.speed = m_GoombaSpeed;
-                break;           
+                break;
+            case TState.HITMARIO:
+                break;
         }
     }
 
@@ -80,6 +85,7 @@ public class Goomba : MonoBehaviour, IRestartGameElement
         {
             PatrolQueue.Enqueue(t);
         }
+        canHit = false;
         SetIdleState();
         this.NavMeshAgent.isStopped = false;
 
@@ -102,6 +108,9 @@ public class Goomba : MonoBehaviour, IRestartGameElement
             case TState.ATTACK:
                 UpdateAttackState();
                 break;
+            case TState.HITMARIO:
+                UpdateHitMario();
+                break;
         }
         Vector3 l_PlayerPosition = MarioPlayer.transform.position;
     }
@@ -112,6 +121,7 @@ public class Goomba : MonoBehaviour, IRestartGameElement
 
     void UpdatePatrolState()
     {
+        NavMeshAgent.isStopped = false;
         if (SeesPlayer())
         {
             State = TState.ATTACK;
@@ -142,9 +152,11 @@ public class Goomba : MonoBehaviour, IRestartGameElement
         }
         NavMeshAgent.SetDestination(this.transform.position + l_DirectionToPlayerXZ);
 
-        if (Vector3.Distance(MarioPlayer.transform.position, this.transform.position) < 2.0f)
+        if (Vector3.Distance(MarioPlayer.transform.position, this.transform.position) < 2.4f)
         {
-            NavMeshAgent.isStopped = true;            
+            NavMeshAgent.isStopped = true;
+            State = TState.HITMARIO;
+            
         }
         if (Vector3.Distance(MarioPlayer.transform.position, this.transform.position) > 6.0f)
         {            
@@ -152,13 +164,16 @@ public class Goomba : MonoBehaviour, IRestartGameElement
         }
     }
 
-    private void OnControllerColliderHit(ControllerColliderHit hit)
+    void UpdateHitMario()
     {
-       if(hit.gameObject.tag == "Player")
+        if (!canHit)
         {
-            Debug.Log("aa");
+            MarioPlayer.DamagePlayer();
+            State = TState.PATROL;
+            canHit = true;
         }
     }
+        
 
     bool PatrolTargetPositionArrived()
     {

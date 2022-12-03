@@ -399,14 +399,20 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
             {
                 if(m_Hit == false)
                 Debug.Log("hit");
-                m_CurrentMarioVida = m_MarioVida.fillAmount - m_MarioVidaQuitada;
-                m_MarioVida.fillAmount = m_CurrentMarioVida;
+                //m_CurrentMarioVida = m_MarioVida.fillAmount - m_MarioVidaQuitada;
+                //m_MarioVida.fillAmount = m_CurrentMarioVida;
                 Debug.DrawRay(hit.point, hit.normal * 3.0f, Color.blue, 5.0f);
                 m_Hit = true;
                 //Debug.Break();
 
             }
         }
+    }
+
+    public void DamagePlayer()
+    {
+        m_CurrentMarioVida = m_MarioVida.fillAmount - m_MarioVidaQuitada;
+        m_MarioVida.fillAmount = m_CurrentMarioVida;
     }
 
     bool CanKillGoomba(Vector3 Normal)
