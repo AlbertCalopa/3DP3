@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Animations;
 using UnityEngine;
+using UnityEngine.UI;
 public class MarioPlayerController : MonoBehaviour, IRestartGameElement
 {
     public enum TPunchType
@@ -57,6 +58,12 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public float m_KillerJumpSpeed = 5.0f;
     public float m_MaxAngleAllowedToKillGoomba = 45.0f;
 
+    [Header("Vida")]
+    public float m_MarioVidaQuitada = 0.125f;
+    public Image m_MarioVida;
+    public float m_CurrentMarioVida;
+    bool m_Hit = false;    
+
     private void Awake()
     {
         m_Animator = GetComponent<Animator>();
@@ -64,10 +71,14 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     }
     void Start()
     {
+        m_MarioVida.fillAmount = 1.0f;
+        m_Hit = false;
+        m_CurrentMarioVida = 1.0f;
         m_ComboPunchCurrentTime = -m_ComboPunchTime;
         m_LeftHandCollider.gameObject.SetActive(false);
         m_RightHandCollider.gameObject.SetActive(false);
         m_RightKickCollider.gameObject.SetActive(false);
+        
 
         m_StartPosition = transform.position;
         m_StartRotation = transform.rotation;
@@ -194,6 +205,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         {
             m_VerticalSpeed = 0.0f;
         }
+                
     }
 
     void LateUpdate()
@@ -299,6 +311,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public void RestartGame()
     {
         m_CharacterController.enabled = false;
+        m_MarioVida.fillAmount = m_CurrentMarioVida;
         if (m_CurrentCheckpoint == null)
         {
             transform.position = m_StartPosition;
@@ -384,7 +397,12 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
             }
             else
             {
+                if(m_Hit == false)
+                Debug.Log("hit");
+                m_CurrentMarioVida = m_MarioVida.fillAmount - m_MarioVidaQuitada;
+                m_MarioVida.fillAmount = m_CurrentMarioVida;
                 Debug.DrawRay(hit.point, hit.normal * 3.0f, Color.blue, 5.0f);
+                m_Hit = true;
                 //Debug.Break();
 
             }

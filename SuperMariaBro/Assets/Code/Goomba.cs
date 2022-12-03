@@ -142,14 +142,21 @@ public class Goomba : MonoBehaviour, IRestartGameElement
         }
         NavMeshAgent.SetDestination(this.transform.position + l_DirectionToPlayerXZ);
 
-        if (Vector3.Distance(MarioPlayer.transform.position, this.transform.position) < 3.0f)
+        if (Vector3.Distance(MarioPlayer.transform.position, this.transform.position) < 2.0f)
         {
-            //NavMeshAgent.isStopped = true;
-            State = TState.ATTACK;
+            NavMeshAgent.isStopped = true;            
         }
         if (Vector3.Distance(MarioPlayer.transform.position, this.transform.position) > 6.0f)
         {            
             State = TState.PATROL;
+        }
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+       if(hit.gameObject.tag == "Player")
+        {
+            Debug.Log("aa");
         }
     }
 
