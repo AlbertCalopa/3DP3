@@ -2631,7 +2631,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 2
   m_Height: 1.7
-  m_Radius: 0.4
+  m_Radius: 0.62
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -3475,7 +3475,7 @@ MonoBehaviour:
   m_MaxAngleAllowedToKillGoomba: 45
   m_MarioVidaQuitada: 0.125
   m_MarioVida: {fileID: 617931313}
-  m_CurrentMarioVida: 0
+  m_CurrentMarioVida: 1
 --- !u!4 &1958261840 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400098, guid: 2c49a169fa02b2545921fcc829011ecb, type: 3}
