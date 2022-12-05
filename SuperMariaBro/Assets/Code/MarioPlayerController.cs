@@ -216,11 +216,13 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
                 {
                     if (Input.GetMouseButton(1))
                     {
+                        
+                        S.transform.SetParent(transform.Find("face"));
                         ShellReady = true;
-                        S.transform.position = transform.position + new Vector3(-1f, 1, 0);
+                        S.transform.position = transform.forward + transform.position + Vector3.up;
                         S.transform.rotation = transform.rotation;
                         S.GetComponent<Rigidbody>().isKinematic = true;
-                        S.transform.SetParent(transform);
+                        
 
 
                     }
@@ -502,10 +504,9 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         }
         else if(hit.gameObject.tag == "Koopa")
         {
-            hit.gameObject.GetComponent<Koopa>().Kill();
             ShellKoopasKilled.Add(hit.gameObject.GetComponent<Koopa>().Kill());
             KillParticles.transform.position = hit.gameObject.transform.position;
-                KillParticles.Play();
+            KillParticles.Play();
             hit.gameObject.SetActive(false);
         }
         

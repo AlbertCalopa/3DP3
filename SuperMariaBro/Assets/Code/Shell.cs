@@ -33,6 +33,6 @@ public class Shell : MonoBehaviour, IRestartGameElement
     }
     public void RestartGame()
     {
-        gameObject.SetActive(true);
+        gameObject.SetActive(false);
     }
 }
