@@ -64,6 +64,8 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public float m_CurrentMarioVida;
     public bool m_Hit = false;
     public bool m_Heal = false;
+    public Text FullVidaText;
+    float Vidas;
 
     Vector3 l_Movement;
 
@@ -82,6 +84,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         m_Hit = false;
         m_Heal = false;
         m_CurrentMarioVida = 1.0f;
+        Vidas = 3.0f;
         m_ComboPunchCurrentTime = -m_ComboPunchTime;
         m_LeftHandCollider.gameObject.SetActive(false);
         m_RightHandCollider.gameObject.SetActive(false);
@@ -433,6 +436,13 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         m_CurrentMarioVida = m_MarioVida.fillAmount - m_MarioVidaQuitada;
         m_MarioVida.fillAmount = m_CurrentMarioVida;
         m_Hit = true;
+        if(m_CurrentMarioVida <= 0)
+        {
+            Vidas -= 1.0f;
+            FullVidaText.text = "" +Vidas;
+            m_CurrentMarioVida = 1.0f;
+            RestartGame();
+        }
         StartCoroutine(PlayerHit());
         
     }

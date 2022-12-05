@@ -1883,7 +1883,7 @@ GameObject:
   - component: {fileID: 1022239990}
   - component: {fileID: 1022239989}
   m_Layer: 5
-  m_Name: Coins (1)
+  m_Name: FullVidaText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3452,6 +3452,8 @@ MonoBehaviour:
   m_MarioVida: {fileID: 617931313}
   m_CurrentMarioVida: 1
   m_Hit: 0
+  m_Heal: 0
+  FullVidaText: {fileID: 1022239989}
 --- !u!4 &1958261840 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400098, guid: 2c49a169fa02b2545921fcc829011ecb, type: 3}
