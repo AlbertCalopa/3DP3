@@ -71,6 +71,9 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
 
     Vector3 KnockBack;
 
+    [Header("HUD")]
+    public GameObject HudCanvas;
+    public GameObject GameOverCanvas;
     
 
     private void Awake()
@@ -340,7 +343,19 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
             transform.rotation = m_CurrentCheckpoint.m_SpawnPosition.rotation;
         }
         m_CharacterController.enabled = true;
-        
+        HudCanvas.SetActive(true);
+        GameOverCanvas.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
+
+    }
+
+    public void ActivateGameOverHud()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        HudCanvas.SetActive(false);
+        GameOverCanvas.SetActive(true);
+        m_CharacterController.enabled = false;
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -441,7 +456,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
             Vidas -= 1.0f;
             FullVidaText.text = "" +Vidas;
             m_CurrentMarioVida = 1.0f;
-            RestartGame();
+            ActivateGameOverHud();
         }
         StartCoroutine(PlayerHit());
         
