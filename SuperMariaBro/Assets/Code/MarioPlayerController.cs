@@ -65,7 +65,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public bool m_Hit = false;
     public bool m_Heal = false;
     public Text FullVidaText;
-    float Vidas;
+    public float Vidas;
 
     Vector3 l_Movement;
 
@@ -79,6 +79,8 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public bool ShellReady;
     public Koopa ShellKoopa;
 
+    [Header("Misc")]
+    public ParticleSystem KillParticles;
     
 
     List<GameObject> ShellKoopasKilled = new List<GameObject>();
@@ -216,6 +218,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
                     {
                         ShellReady = true;
                         S.transform.position = transform.position + new Vector3(-1f, 1, 0);
+                        S.transform.rotation = transform.rotation;
                         S.GetComponent<Rigidbody>().isKinematic = true;
                         S.transform.SetParent(transform);
 
@@ -493,12 +496,16 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
             {
                 hit.gameObject.GetComponent<Goomba>().Kill();
                 JumpOverEnemy();
+                KillParticles.transform.position = hit.gameObject.transform.position;
+                KillParticles.Play();
             }                
         }
         else if(hit.gameObject.tag == "Koopa")
         {
             hit.gameObject.GetComponent<Koopa>().Kill();
             ShellKoopasKilled.Add(hit.gameObject.GetComponent<Koopa>().Kill());
+            KillParticles.transform.position = hit.gameObject.transform.position;
+                KillParticles.Play();
             hit.gameObject.SetActive(false);
         }
         

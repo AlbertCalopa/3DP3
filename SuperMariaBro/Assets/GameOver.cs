@@ -9,7 +9,15 @@ public class GameOver : MonoBehaviour
     
     public void Restart()
     {
-        m_Mario.RestartGame();
+        if(m_Mario.Vidas >= 0)
+        {
+            m_Mario.RestartGame();
+        }
+        else
+        {
+            Debug.Log("No quedan mas vidas");
+        }
+       
     }
     public void Exit()
     {
