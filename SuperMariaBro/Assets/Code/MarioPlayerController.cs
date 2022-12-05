@@ -81,6 +81,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
 
     [Header("Misc")]
     public ParticleSystem KillParticles;
+    public ParticleSystem CoinParticles;
     
 
     List<GameObject> ShellKoopasKilled = new List<GameObject>();
@@ -417,6 +418,8 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         else if(other.tag == "Coin")
         {
             other.GetComponent<Coin>().Pick();
+            CoinParticles.transform.position = other.transform.position + Vector3.up;
+            CoinParticles.Play();
         }
         else if (other.tag == "DamagePlayer")
         {

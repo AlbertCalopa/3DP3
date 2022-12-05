@@ -8130,7 +8130,7 @@ ParticleSystem:
   ringBufferLoopRange: {x: 0, y: 1}
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
@@ -13259,6 +13259,10 @@ PrefabInstance:
       propertyPath: FullVidaText
       value: 
       objectReference: {fileID: 1022239989}
+    - target: {fileID: 2343299471484803069, guid: f2d430d387648254db7192150024afb4, type: 3}
+      propertyPath: CoinParticles
+      value: 
+      objectReference: {fileID: 1831924472}
     - target: {fileID: 2343299471484803069, guid: f2d430d387648254db7192150024afb4, type: 3}
       propertyPath: KillParticles
       value: 
