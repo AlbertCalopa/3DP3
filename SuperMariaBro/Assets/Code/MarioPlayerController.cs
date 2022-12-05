@@ -357,6 +357,15 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
             DamagePlayer();
             KnockBack = ((transform.position  - other.transform.position)+ Vector3.up).normalized * 0.025f;
         }
+        else if (other.tag == "LifeItem")
+        {
+            m_CurrentMarioVida = m_MarioVida.fillAmount + m_MarioVidaQuitada;
+            m_MarioVida.fillAmount = m_CurrentMarioVida;
+            if (m_CurrentMarioVida < 1.01f)
+            {
+                other.gameObject.SetActive(false);
+            }
+        }
 
     }
     private void OnTriggerExit(Collider other)

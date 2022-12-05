@@ -10,6 +10,7 @@ TagManager:
   - Goomba
   - Coin
   - DamagePlayer
+  - LifeItem
   layers:
   - Default
   - TransparentFX
