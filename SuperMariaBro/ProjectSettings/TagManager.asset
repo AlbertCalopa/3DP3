@@ -11,6 +11,10 @@ TagManager:
   - Coin
   - DamagePlayer
   - LifeItem
+  - DeadZone
+  - Koopa
+  - Shell
+  - DamageShell
   layers:
   - Default
   - TransparentFX

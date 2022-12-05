@@ -18,7 +18,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         JUMP_3
     }
     Animator m_Animator;
-    CharacterController m_CharacterController;
+    public CharacterController m_CharacterController;
     float m_VerticalSpeed = 0.0f;
     public float m_JumpSpeed;
 
@@ -69,11 +69,19 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
 
     Vector3 l_Movement;
 
-    Vector3 KnockBack;
+    public Vector3 KnockBack;
 
     [Header("HUD")]
     public GameObject HudCanvas;
     public GameObject GameOverCanvas;
+
+    bool ShellCaught;
+    public bool ShellReady;
+    public Koopa ShellKoopa;
+
+    
+
+    List<GameObject> ShellKoopasKilled = new List<GameObject>();
     
 
     private void Awake()
@@ -86,6 +94,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         m_MarioVida.fillAmount = 1.0f;
         m_Hit = false;
         m_Heal = false;
+        ShellCaught= false;
         m_CurrentMarioVida = 1.0f;
         Vidas = 3.0f;
         m_ComboPunchCurrentTime = -m_ComboPunchTime;
@@ -189,11 +198,43 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
                 l_MovementSpeed = m_RunSpeed;
             }
         }
+        
         m_Animator.SetFloat("Speed", l_Speed);             
         l_Movement = l_Movement * l_MovementSpeed * Time.deltaTime;
 
         m_VerticalSpeed += Physics.gravity.y * Time.deltaTime;
         l_Movement.y = m_VerticalSpeed * Time.deltaTime;
+
+        Debug.Log(ShellCaught);
+        if (ShellCaught)
+        {
+            foreach(var S in ShellKoopasKilled)
+            {
+                if (Vector3.Distance(transform.position, S.transform.position) < 2.5f)
+                {
+                    if (Input.GetMouseButton(1))
+                    {
+                        ShellReady = true;
+                        S.transform.position = transform.position + new Vector3(-1f, 1, 0);
+                        S.GetComponent<Rigidbody>().isKinematic = true;
+                        S.transform.SetParent(transform);
+
+
+                    }
+                    if (Input.GetMouseButtonUp(1))
+                    {
+                        ShellReady = false;
+                        ShellCaught = false;
+                        S.transform.SetParent(null);
+                        S.GetComponent<Rigidbody>().velocity = transform.forward * 10.0f;
+                        S.GetComponent<Rigidbody>().isKinematic = false;
+                        
+                    }
+
+                }
+            }
+            
+        }
 
         if (Input.GetKey(KeyCode.Space))
         {
@@ -377,6 +418,15 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
             DamagePlayer();
             KnockBack = ((transform.position  - other.transform.position)+ Vector3.up).normalized * 0.025f;
         }
+        else if (other.tag == "DeadZone")
+        {
+            DamagePlayer();
+            KnockBack = ((transform.position - other.transform.position) + Vector3.up).normalized * 0.025f;
+        }
+        else if (other.tag == "DamageShell")
+        {
+            DamagePlayer();            
+        }
         else if (other.tag == "LifeItem")
         {
             HealPlayer();
@@ -385,6 +435,10 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
                 other.gameObject.SetActive(false);
             }
         }
+        else if(other.tag == "Shell")
+        {
+            ShellCaught = true;            
+        }
 
     }
     private void OnTriggerExit(Collider other)
@@ -392,7 +446,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         if(other.tag == "Elevator" && other==m_CurrentElevatorCollider)
         {
             DetachElevator();
-        }
+        }        
     }
     private void OnTriggerStay(Collider other)
     {
@@ -439,12 +493,18 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
             {
                 hit.gameObject.GetComponent<Goomba>().Kill();
                 JumpOverEnemy();
-            }            
-
-            
+            }                
+        }
+        else if(hit.gameObject.tag == "Koopa")
+        {
+            hit.gameObject.GetComponent<Koopa>().Kill();
+            ShellKoopasKilled.Add(hit.gameObject.GetComponent<Koopa>().Kill());
+            hit.gameObject.SetActive(false);
         }
         
     }
+
+    
 
     public void DamagePlayer()
     {
