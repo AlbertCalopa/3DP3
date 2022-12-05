@@ -25,6 +25,15 @@ public class HudVidaAnim : MonoBehaviour
             }
             
         }
+        if (m_Mario.m_Heal)
+        {
+            VidaAnim.SetBool("Heal", false);
+            VidaAnim.SetBool("Hit", true);
+            if (VidaAnim.GetBool("Hit") == true)
+            {
+                StartCoroutine(AnimationVida());
+            }
+        }
     }
 
     IEnumerator AnimationVida()

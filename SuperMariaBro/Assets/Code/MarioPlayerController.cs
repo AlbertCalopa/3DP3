@@ -63,6 +63,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public Image m_MarioVida;
     public float m_CurrentMarioVida;
     public bool m_Hit = false;
+    public bool m_Heal = false;
 
     Vector3 l_Movement;
 
@@ -79,6 +80,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     {
         m_MarioVida.fillAmount = 1.0f;
         m_Hit = false;
+        m_Heal = false;
         m_CurrentMarioVida = 1.0f;
         m_ComboPunchCurrentTime = -m_ComboPunchTime;
         m_LeftHandCollider.gameObject.SetActive(false);
@@ -359,8 +361,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         }
         else if (other.tag == "LifeItem")
         {
-            m_CurrentMarioVida = m_MarioVida.fillAmount + m_MarioVidaQuitada;
-            m_MarioVida.fillAmount = m_CurrentMarioVida;
+            HealPlayer();
             if (m_CurrentMarioVida < 1.01f)
             {
                 other.gameObject.SetActive(false);
@@ -435,10 +436,24 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         StartCoroutine(PlayerHit());
         
     }
+
+    public void HealPlayer()
+    {
+        m_CurrentMarioVida = m_MarioVida.fillAmount + m_MarioVidaQuitada;
+        m_MarioVida.fillAmount = m_CurrentMarioVida;
+        m_Heal = true;
+        StartCoroutine(PlayerHeal());
+    }
     IEnumerator PlayerHit()
     {
         yield return new WaitForSeconds(0.2f);
         m_Hit = false;
+    }
+
+    IEnumerator PlayerHeal()
+    {
+        yield return new WaitForSeconds(0.2f);
+        m_Heal = false;
     }
 
     bool CanKillGoomba(Vector3 Normal)
