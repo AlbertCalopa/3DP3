@@ -62,11 +62,13 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public float m_MarioVidaQuitada = 0.125f;
     public Image m_MarioVida;
     public float m_CurrentMarioVida;
-    bool m_Hit = false;
+    public bool m_Hit = false;
 
     Vector3 l_Movement;
 
     Vector3 KnockBack;
+
+    
 
     private void Awake()
     {

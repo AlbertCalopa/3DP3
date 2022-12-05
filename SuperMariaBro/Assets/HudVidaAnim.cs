@@ -15,8 +15,9 @@ public class HudVidaAnim : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(m_Mario.m_CurrentMarioVida != 0.9)
+        if(m_Mario.m_Hit)
         {
+            VidaAnim.SetBool("Heal", false);
             VidaAnim.SetBool("Hit", true);
             if(VidaAnim.GetBool("Hit") == true)
             {                
