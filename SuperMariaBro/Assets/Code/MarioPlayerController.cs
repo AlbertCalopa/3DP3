@@ -467,12 +467,15 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         else if (other.tag == "DamagePlayer")
         {
             DamagePlayer();
+            m_Animator.SetTrigger("Damage");
             KnockBack = ((transform.position  - other.transform.position)+ Vector3.up).normalized * 0.025f;
         }
         else if (other.tag == "DeadZone")
         {
-            DamagePlayer();
-            KnockBack = ((transform.position - other.transform.position) + Vector3.up).normalized * 0.025f;
+            Vidas -= 1.0f;
+            FullVidaText.text = "" + Vidas;
+            m_CurrentMarioVida = 1.0f;
+            ActivateGameOverHud();
         }
         else if (other.tag == "DamageShell")
         {
