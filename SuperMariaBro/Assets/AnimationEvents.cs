@@ -36,4 +36,8 @@ public class AnimationEvents : MonoBehaviour
     {
 
     }
+    public void LongJumpSound()
+    { 
+
+    }
 }

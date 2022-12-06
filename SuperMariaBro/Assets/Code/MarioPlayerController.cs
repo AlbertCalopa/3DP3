@@ -21,6 +21,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public CharacterController m_CharacterController;
     float m_VerticalSpeed = 0.0f;
     public float m_JumpSpeed;
+    public float m_LongJumpSpeed;
 
     public Camera m_Camera;
     public float m_LerpRotation = 0.85f;
@@ -170,15 +171,23 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
 
         if (Input.GetKey(KeyCode.Space) && m_OnGround && CanJump())
         {
-            m_VerticalSpeed = m_JumpSpeed;
+            
 
-
-            if (MustRestartComboJump())
+            if (Input.GetKey(KeyCode.LeftShift))
             {
+                m_VerticalSpeed = m_JumpSpeed * 1.5f;
+                m_Animator.SetTrigger("LongJump"); 
+            }
+
+            else if (MustRestartComboJump())
+            {
+                m_VerticalSpeed = m_JumpSpeed;
+                Debug.Log("SDAJJSA");
                 SetComboJump(TJumpType.JUMP_1);
             }
             else
             {
+                m_VerticalSpeed = m_JumpSpeed;
                 NextComboJump();
             }
         }
@@ -467,7 +476,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         else if (other.tag == "DamagePlayer")
         {
             DamagePlayer();
-            m_Animator.SetTrigger("Damage");
+            
             KnockBack = ((transform.position  - other.transform.position)+ Vector3.up).normalized * 0.025f;
         }
         else if (other.tag == "DeadZone")
@@ -568,7 +577,8 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         m_CurrentMarioVida = m_MarioVida.fillAmount - m_MarioVidaQuitada;
         m_MarioVida.fillAmount = m_CurrentMarioVida;
         m_Hit = true;
-        if(m_CurrentMarioVida <= 0)
+        m_Animator.SetTrigger("Damage");
+        if (m_CurrentMarioVida <= 0)
         {
             Vidas -= 1.0f;
             FullVidaText.text = "" +Vidas;
@@ -589,6 +599,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     IEnumerator PlayerHit()
     {
         yield return new WaitForSeconds(0.2f);
+        
         m_Hit = false;
     }
 
