@@ -92,6 +92,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public float m_TimeGrounded = 0.3f;
 
 
+
     private void Awake()
     {
         m_Animator = GetComponent<Animator>();
@@ -546,7 +547,9 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     }
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if(hit.gameObject.tag == "Bridge")
+        
+
+        if (hit.gameObject.tag == "Bridge")
         {
             hit.gameObject.GetComponent<Rigidbody>().AddForceAtPosition(-hit.normal * m_BridgeForce, hit.point);
         }
@@ -567,7 +570,18 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
             KillParticles.Play();
             hit.gameObject.SetActive(false);
         }
-        
+
+        if (!m_OnGround && hit.normal.y < 0.1f)
+        {
+            if (Input.GetKey(KeyCode.Space))
+            {
+                
+                m_VerticalSpeed = m_JumpSpeed;
+                m_Animator.SetTrigger("WallJumping");
+
+
+            }
+        }
     }
 
     
