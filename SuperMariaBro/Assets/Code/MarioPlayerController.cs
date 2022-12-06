@@ -166,6 +166,8 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
 
         l_Movement = Vector3.zero;
 
+        SetFall();
+
         if (Input.GetKey(KeyCode.Space) && m_OnGround && CanJump())
         {
             m_VerticalSpeed = m_JumpSpeed;
@@ -236,7 +238,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
             }
         }
         
-        m_Animator.SetFloat("Speed", l_Speed);             
+        m_Animator.SetFloat("Speed", l_Speed);
         l_Movement = l_Movement * l_MovementSpeed * Time.deltaTime;
 
         m_VerticalSpeed += Physics.gravity.y * Time.deltaTime;
@@ -401,6 +403,18 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         else if (m_CurrentComboJump == TJumpType.JUMP_3)
         { 
             m_Animator.SetTrigger("JumpThird");
+        }
+    }
+
+    void SetFall()
+    {
+        if (!m_OnGround)
+        {
+            m_Animator.SetTrigger("Falling");
+        }
+        else
+        { 
+            m_Animator.SetTrigger("NotFalling");
         }
     }
 
