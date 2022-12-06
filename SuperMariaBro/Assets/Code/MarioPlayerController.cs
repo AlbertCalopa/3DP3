@@ -85,7 +85,11 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     
 
     List<GameObject> ShellKoopasKilled = new List<GameObject>();
-    
+
+    bool m_OnGround = true;
+    float m_TimeOfGround;
+    public float m_TimeGrounded = 0.3f;
+
 
     private void Awake()
     {
@@ -101,6 +105,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         m_CurrentMarioVida = 1.0f;
         Vidas = 3.0f;
         m_ComboPunchCurrentTime = -m_ComboPunchTime;
+        m_ComboJumpCurrentTime = -m_ComboJumpTime; 
         m_LeftHandCollider.gameObject.SetActive(false);
         m_RightHandCollider.gameObject.SetActive(false);
         m_RightKickCollider.gameObject.SetActive(false);
@@ -149,6 +154,8 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     {
         float l_Speed = 0.0f;
 
+        m_TimeOfGround += Time.deltaTime;
+
         Vector3 l_ForwardCamera = m_Camera.transform.forward;
         Vector3 l_RightCamera = m_Camera.transform.right;
         l_ForwardCamera.y = 0.0f;
@@ -158,6 +165,33 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         bool l_HasMovenent = false;
 
         l_Movement = Vector3.zero;
+
+        if (Input.GetKey(KeyCode.Space) && m_OnGround && CanJump())
+        {
+            m_VerticalSpeed = m_JumpSpeed;
+
+
+            if (MustRestartComboJump())
+            {
+                SetComboJump(TJumpType.JUMP_1);
+            }
+            else
+            {
+                NextComboJump();
+            }
+        }
+
+        if (Input.GetMouseButtonDown(0) && CanPunch())
+        {
+            if (MustRestartComboPunch())
+            {
+                SetComboPunch(TPunchType.RIGHT_HAND);
+            }
+            else
+            {
+                NextComboPunch();
+            }
+        }
 
         if (m_Hit)
         {
@@ -208,7 +242,6 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         m_VerticalSpeed += Physics.gravity.y * Time.deltaTime;
         l_Movement.y = m_VerticalSpeed * Time.deltaTime;
 
-        Debug.Log(ShellCaught);
         if (ShellCaught)
         {
             foreach(var S in ShellKoopasKilled)
@@ -242,37 +275,29 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
             
         }
 
-        if (Input.GetKey(KeyCode.Space))
-        {
-            m_VerticalSpeed = m_JumpSpeed;
-
-            if (MustRestartComboJump()) 
-            {
-                SetComboJump(TJumpType.JUMP_1);
-            }
-            else
-            {
-                NextComboJump();
-            }
-        }
-        if (Input.GetMouseButtonDown(0) && CanPunch())
-        {
-            if (MustRestartComboPunch())
-            {
-                SetComboPunch(TPunchType.RIGHT_HAND);
-            }
-            else
-            {
-                NextComboPunch();
-            }
-        }
+        
+        
         //m_CharacterController.Move(l_Movement);
         CollisionFlags l_CollisionFlags = m_CharacterController.Move(l_Movement);
-        if((l_CollisionFlags & CollisionFlags.Below)!=0 && m_VerticalSpeed < 0.0f)
+        if((l_CollisionFlags & CollisionFlags.Above)!=0 && m_VerticalSpeed > 0.0f)
         {
             m_VerticalSpeed = 0.0f;
         }
-                
+        if ((l_CollisionFlags & CollisionFlags.Below) != 0)
+        {
+            m_VerticalSpeed = 0.0f;
+            m_OnGround = true;
+            m_TimeOfGround = 0;
+        }
+        else
+        {
+            m_OnGround = false;
+        }
+        if (m_TimeOfGround < m_TimeGrounded)
+        {
+            m_OnGround = true;
+        }
+
     }
 
     void LateUpdate()
@@ -292,6 +317,10 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     public void SetIsPunchEnabled(bool IsPunchEnabled)
     {
         m_IsPunchEnabled = IsPunchEnabled;
+    }
+    bool CanJump() 
+    {
+        return !m_IsJumpEnabled;
     }
 
     public void SetIsJumpEnabled(bool IsJumpEnabled) 
@@ -345,7 +374,7 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         m_IsPunchEnabled = true;
         if(m_CurrentComboPunch == TPunchType.RIGHT_HAND)
         {
-            m_Animator.SetTrigger("PunchRightHand");
+            m_Animator.SetTrigger("PunchRightHand"); 
         }
         else if (m_CurrentComboPunch == TPunchType.LEFT_HAND)
         {
@@ -358,20 +387,20 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
     } 
     void SetComboJump(TJumpType JumpType)
     {
-        m_CurrentComboJump = JumpType;
-        m_ComboPunchCurrentTime = Time.time; 
-        m_IsPunchEnabled = true;
+        m_CurrentComboJump = JumpType; 
+        m_ComboJumpCurrentTime = Time.time; 
+        m_IsJumpEnabled = true; 
         if (m_CurrentComboJump == TJumpType.JUMP_1)
         {
-            m_Animator.SetTrigger("Jump1");
+            m_Animator.SetTrigger("JumpFirst");
         }
         else if (m_CurrentComboJump == TJumpType.JUMP_2)
         {
-            m_Animator.SetTrigger("Jump2");
+            m_Animator.SetTrigger("JumpSecond");
         }
         else if (m_CurrentComboJump == TJumpType.JUMP_3)
-        {
-            m_Animator.SetTrigger("Jump3");
+        { 
+            m_Animator.SetTrigger("JumpThird");
         }
     }
 

@@ -282,6 +282,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 174867185}
   m_CullTransparentMesh: 1
+--- !u!1 &204119967 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2343299471484899581, guid: f2d430d387648254db7192150024afb4, type: 3}
+  m_PrefabInstance: {fileID: 2343299471826150323}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &204119971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 204119967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e52557af7548694f9b911abb985b60b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &246602623
 GameObject:
   m_ObjectHideFlags: 0
@@ -12869,7 +12886,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2343299471484803069, guid: f2d430d387648254db7192150024afb4, type: 3}
   m_PrefabInstance: {fileID: 2343299471826150323}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 204119967}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1f4029613143cf24da5ac8a5f7398aa4, type: 3}
@@ -13252,6 +13269,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 617971764}
     - target: {fileID: 2343299471484803069, guid: f2d430d387648254db7192150024afb4, type: 3}
+      propertyPath: m_JumpSpeed
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343299471484803069, guid: f2d430d387648254db7192150024afb4, type: 3}
       propertyPath: m_MarioVida
       value: 
       objectReference: {fileID: 617931313}
@@ -13271,9 +13292,17 @@ PrefabInstance:
       propertyPath: GameOverCanvas
       value: 
       objectReference: {fileID: 1154530124}
+    - target: {fileID: 2343299471484803069, guid: f2d430d387648254db7192150024afb4, type: 3}
+      propertyPath: m_ComboJumpTime
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2343299471484899581, guid: f2d430d387648254db7192150024afb4, type: 3}
       propertyPath: m_Name
       value: SuperMario
+      objectReference: {fileID: 0}
+    - target: {fileID: 2343299471492162207, guid: f2d430d387648254db7192150024afb4, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2343299471484803041, guid: f2d430d387648254db7192150024afb4, type: 3}
