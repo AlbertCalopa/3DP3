@@ -587,7 +587,7 @@ MonoBehaviour:
   SightDistance: 8
   m_KillTime: 0.5
   m_KillScale: 0.2
-  m_GoombaSpeed: 2
+  m_KoompaSpeed: 6
   PatrolList:
   - {fileID: 0}
   - {fileID: 0}

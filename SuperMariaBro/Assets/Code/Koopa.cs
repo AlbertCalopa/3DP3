@@ -30,7 +30,7 @@ public class Koopa : MonoBehaviour, IRestartGameElement
     public float m_KillScale = 0.2f;
 
     float m_StartSpeed = 3.0f;
-    public float m_GoombaSpeed = 2.0f;
+    public float m_KoompaSpeed = 2.0f;
 
     bool SetDestination = false;
 
@@ -69,7 +69,7 @@ public class Koopa : MonoBehaviour, IRestartGameElement
                 NavMeshAgent.SetDestination(PatrolQueue.Peek().position);
                 break;
             case TState.ATTACK:
-                NavMeshAgent.speed = m_GoombaSpeed;
+                NavMeshAgent.speed = m_KoompaSpeed;
                 break;
         }
     }
@@ -155,7 +155,7 @@ public class Koopa : MonoBehaviour, IRestartGameElement
             NavMeshAgent.isStopped = true;
 
         }
-        if (Vector3.Distance(MarioPlayer.transform.position, this.transform.position) > 6.0f)
+        if (Vector3.Distance(MarioPlayer.transform.position, this.transform.position) > 5.0f)
         {
             State = TState.PATROL;
         }
