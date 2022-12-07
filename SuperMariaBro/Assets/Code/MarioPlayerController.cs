@@ -565,10 +565,15 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         }
         else if(hit.gameObject.tag == "Koopa")
         {
-            ShellKoopasKilled.Add(hit.gameObject.GetComponent<Koopa>().Kill());
-            KillParticles.transform.position = hit.gameObject.transform.position;
-            KillParticles.Play();
-            hit.gameObject.SetActive(false);
+            if (CanKillGoomba(hit.normal))
+            {
+                ShellKoopasKilled.Add(hit.gameObject.GetComponent<Koopa>().Kill());
+                JumpOverEnemy();
+                KillParticles.transform.position = hit.gameObject.transform.position;
+                KillParticles.Play();
+            }
+            
+            //hit.gameObject.SetActive(false);
         }
 
         if (!m_OnGround && hit.normal.y < 0.1f)
