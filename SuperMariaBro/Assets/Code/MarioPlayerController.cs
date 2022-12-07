@@ -493,11 +493,12 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         }
         else if (other.tag == "LifeItem")
         {
-            HealPlayer();
-            if (m_CurrentMarioVida < 1.01f)
+            
+            if (m_CurrentMarioVida <= 0.9f)
             {
                 other.gameObject.SetActive(false);
             }
+            HealPlayer();
         }
         else if(other.tag == "Shell")
         {
@@ -565,10 +566,15 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
         }
         else if(hit.gameObject.tag == "Koopa")
         {
-            ShellKoopasKilled.Add(hit.gameObject.GetComponent<Koopa>().Kill());
-            KillParticles.transform.position = hit.gameObject.transform.position;
-            KillParticles.Play();
-            hit.gameObject.SetActive(false);
+            if (CanKillGoomba(hit.normal))
+            {
+                ShellKoopasKilled.Add(hit.gameObject.GetComponent<Koopa>().Kill());
+                JumpOverEnemy();
+                KillParticles.transform.position = hit.gameObject.transform.position;
+                KillParticles.Play();
+            }
+            
+            //hit.gameObject.SetActive(false);
         }
 
         if (!m_OnGround && hit.normal.y < 0.1f)
@@ -605,10 +611,14 @@ public class MarioPlayerController : MonoBehaviour, IRestartGameElement
 
     public void HealPlayer()
     {
-        m_CurrentMarioVida = m_MarioVida.fillAmount + m_MarioVidaQuitada;
-        m_MarioVida.fillAmount = m_CurrentMarioVida;
-        m_Heal = true;
-        StartCoroutine(PlayerHeal());
+        if(m_CurrentMarioVida <= 0.9)
+        {
+            m_CurrentMarioVida = m_MarioVida.fillAmount + m_MarioVidaQuitada;
+            m_MarioVida.fillAmount = m_CurrentMarioVida;
+            m_Heal = true;
+            StartCoroutine(PlayerHeal());
+        }
+        
     }
     IEnumerator PlayerHit()
     {

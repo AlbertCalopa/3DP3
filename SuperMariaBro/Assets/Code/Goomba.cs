@@ -152,7 +152,7 @@ public class Goomba : MonoBehaviour, IRestartGameElement
             NavMeshAgent.isStopped = true;            
             
         }
-        if (Vector3.Distance(MarioPlayer.transform.position, this.transform.position) > 6.0f)
+        if (Vector3.Distance(MarioPlayer.transform.position, this.transform.position) > 5.0f)
         {            
             State = TState.PATROL;
         }
